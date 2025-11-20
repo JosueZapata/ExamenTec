@@ -61,6 +61,12 @@ export class CategoriesComponent implements OnInit {
     this.loadCategories();
   }
 
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.currentPage = 1;
+    this.loadCategories();
+  }
+
   goToPage(page: number): void {
     if (page >= 1 && this.pagedResult && page <= (this.pagedResult.totalPages || 1)) {
       this.currentPage = page;

@@ -61,6 +61,12 @@ export class ProductsComponent implements OnInit {
     this.loadProducts();
   }
 
+  clearSearch(): void {
+    this.searchTerm = '';
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
   goToPage(page: number): void {
     if (page >= 1 && this.pagedResult && page <= (this.pagedResult.totalPages || 1)) {
       this.currentPage = page;
