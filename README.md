@@ -29,6 +29,11 @@ Suite full stack compuesta por un backend en ASP.NET Core 9 y un frontend Angula
 
 > Tip: importa `postman/ExamenTec_API.postman_collection.json` y `postman/ExamenTec_Local.postman_environment.json`, ejecuta el request `Auth > Login` y reutiliza el token para el resto de pruebas.
 
+**Credenciales demo**
+- `admin@examentec.com` / `Admin123!`
+- `product@examentec.com` / `Product123!`
+- `category@examentec.com` / `Category123!`
+
 ---
 
 ### Cómo correr pruebas automatizadas
@@ -120,9 +125,4 @@ Suite full stack compuesta por un backend en ASP.NET Core 9 y un frontend Angula
 - `postman/` – colección y ambiente para probar la API.
 
 ---
-
-### Próximos pasos sugeridos
-- Configurar integración continua (build + pruebas backend/frontend).
-- Automatizar la regeneración del seed en pipelines para mantener datos consistentes.
-- Publicar contenedores Docker para ambos servicios si se necesita despliegue consistente.
 
