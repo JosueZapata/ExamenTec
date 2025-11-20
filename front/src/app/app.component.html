@@ -1,0 +1,9 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+  <app-navbar></app-navbar>
+  <div class="relative min-h-[calc(100vh-4rem)]">
+    <div [@routeAnimations]="getRouteAnimationData()">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <app-loading></app-loading>
+</div>

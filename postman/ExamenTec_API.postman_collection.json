@@ -1,0 +1,538 @@
+{
+  "info": {
+    "_postman_id": "9d0c28bf-25c6-4644-b8f5-d6f19bf3c0c9",
+    "name": "ExamenTec API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "cursor-assistant"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Account/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Account",
+                "login"
+              ]
+            },
+            "description": "Autenticación para obtener el token JWT. Puedes intercambiar las credenciales por las de Product o Category si necesitas validar políticas específicas."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login exitoso\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.result) {",
+                  "    pm.environment.set(\"token\", json.result.token);",
+                  "    pm.environment.set(\"tokenExpiresAt\", json.result.expiresAt);",
+                  "    pm.environment.set(\"userRole\", json.result.role);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "Search categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/search?searchTerm=tec&maxResults=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Categories",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "searchTerm",
+                  "value": "tec"
+                },
+                {
+                  "key": "maxResults",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Busca categorías por nombre. Requiere roles Admin, Product o Category."
+          },
+          "response": []
+        },
+        {
+          "name": "Get paged categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories?page={{page}}&pageSize={{pageSize}}&searchTerm={{categorySearch}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Categories"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "{{pageSize}}"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "{{categorySearch}}"
+                }
+              ]
+            },
+            "description": "Listado paginado de categorías. La respuesta incluye metadatos de paginación en el objeto `result`."
+          },
+          "response": []
+        },
+        {
+          "name": "Get category by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Categories",
+                "{{categoryId}}"
+              ]
+            },
+            "description": "Obtiene el detalle de una categoría utilizando el identificador almacenado en `categoryId`."
+          },
+          "response": []
+        },
+        {
+          "name": "Create category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Wearables Inteligentes\",\n  \"description\": \"Categoría creada desde Postman\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Categories"
+              ]
+            },
+            "description": "Crea una nueva categoría. Debes tener permisos de `CategoryAccess`."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Categoría creada\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.result) {",
+                  "    pm.environment.set(\"categoryId\", json.result.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update category",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Wearables Inteligentes (Actualizada)\",\n  \"description\": \"Nombre actualizado desde Postman\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Categories",
+                "{{categoryId}}"
+              ]
+            },
+            "description": "Actualiza una categoría existente usando el `categoryId` guardado."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete category",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Categories",
+                "{{categoryId}}"
+              ]
+            },
+            "description": "Elimina la categoría indicada. Devuelve 204 No Content."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get paged products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products?page={{page}}&pageSize={{pageSize}}&searchTerm={{productSearch}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Products"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "{{pageSize}}"
+                },
+                {
+                  "key": "searchTerm",
+                  "value": "{{productSearch}}"
+                }
+              ]
+            },
+            "description": "Lista productos paginados. El wrapper `result` contiene `items` y datos de paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Get product by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Products",
+                "{{productId}}"
+              ]
+            },
+            "description": "Detalle de producto. Usa `productId` del ambiente."
+          },
+          "response": []
+        },
+        {
+          "name": "Create product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartwatch Pro\",\n  \"description\": \"Generado desde Postman\",\n  \"price\": 249.99,\n  \"stock\": 50,\n  \"categoryId\": \"{{categoryId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Products"
+              ]
+            },
+            "description": "Crea un producto asociado a la categoría indicada."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Producto creado\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const json = pm.response.json();",
+                  "if (json && json.result) {",
+                  "    pm.environment.set(\"productId\", json.result.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update product",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartwatch Pro (Actualizado)\",\n  \"description\": \"Actualizado desde Postman\",\n  \"price\": 259.99,\n  \"stock\": 45,\n  \"categoryId\": \"{{categoryId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Products",
+                "{{productId}}"
+              ]
+            },
+            "description": "Actualiza el producto creado previamente."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete product",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Products",
+                "{{productId}}"
+              ]
+            },
+            "description": "Elimina el producto indicado. Devuelve 204 No Content."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Logs",
+      "item": [
+        {
+          "name": "Get logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/Logs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "Logs"
+              ]
+            },
+            "description": "Devuelve todos los registros almacenados. Endpoint sin autenticación."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "exec": [
+          "// Puedes colocar lógica común antes de cada request aquí"
+        ],
+        "type": "text/javascript"
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "exec": [
+          "// Tests globales opcionales"
+        ],
+        "type": "text/javascript"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "page",
+      "value": "1"
+    },
+    {
+      "key": "pageSize",
+      "value": "10"
+    },
+    {
+      "key": "categorySearch",
+      "value": ""
+    },
+    {
+      "key": "productSearch",
+      "value": ""
+    }
+  ]
+}
+
